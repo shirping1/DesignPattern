@@ -10,17 +10,36 @@ public class PEnemyHpObserver : MonoBehaviour, PObserver
     float damage = 10.0f;
 
     public Slider hpSlider;
-    GameObject HP_PSubject;
+    HP_PSubject hP_PSubject;
+
+    private void Start()
+    {
+        hP_PSubject = GameObject.Find("HP_PSubject").GetComponent<HP_PSubject>();
+    }
 
     public void PObserverUpdate(float myHP, float enemyHP)
     {
-        this.myHP = myHP;
-        this.enemyHP = enemyHP;
+        if(this.enemyHP != enemyHP && this.myHP == myHP)
+        {
+            this.enemyHP = enemyHP;
+            AttackMessage();
+        }
+        else
+        {
+            this.enemyHP = enemyHP;
+            this.myHP = myHP;
+        }
+
         hpSlider.value = this.enemyHP;
     }
 
-    public void OnClickAttack()
+    public void AttackMessage()
     {
-        HP_PSubject.gameObject.GetComponent<HP_PSubject>().SetHP(myHP, enemyHP - damage);
+        Debug.Log($"이브이의 공격! Damage : {damage}");
+        Invoke("AttackDamage", 1.0f);
+    }
+    public void AttackDamage()
+    {
+        hP_PSubject.SetHP(myHP - damage, enemyHP);
     }
 }
